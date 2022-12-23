@@ -6,14 +6,14 @@ typedef unsigned long long ul;
 
 using namespace std;
 
-ul get_remainder(ul & time,int exponent){
+inline ul get_remainder(ul & time,int exponent){
     ul divisor=(ul)pow(10,exponent);
     ul rem=time%divisor;
     time=time/divisor;
     return rem;
 }
 
-ul get_isttime(ul tme,int precision){
+inline ul get_isttime(ul tme,int precision){
     
     // 11 digit or less --> second(0), 12 to 14 digit --> millisecond(1), 15 to 16 digit --> microsecond(2), 17 digit or upper --> nanosecond(3).
     ul temp=((5*60)*60+(30*60));
@@ -28,7 +28,7 @@ ul get_isttime(ul tme,int precision){
     return tme;
 }
 
-char* get_week(int day){
+inline char* get_week(int day){
 
 char* ch;
     if(day==0)
@@ -48,7 +48,7 @@ char* ch;
    return ch;
 }
 
-char* get_month(int mon){
+inline char* get_month(int mon){
     char* ch;
     if(mon==0)
         ch="January";
@@ -77,18 +77,21 @@ char* get_month(int mon){
     return ch;
 }
 
-int get_year(int ey){
+inline int get_year(int ey){
     return 1900+ey;
     }
 
-char* get_meridian(int hr){
+inline char* get_meridian(int hr){
     if(hr>=12 && hr<=23)
         return "PM";
     else if(hr>=0 && hr<=11 )
         return "AM" ;
 }
+inline int TwelveHRFormat(struct tm* ptm){
+    return  ((ptm->tm_hour%24)>=13&&(ptm->tm_hour%24)<=23)?(ptm->tm_hour%24)%12:ptm->tm_hour%24;
+}
 
-void print(int& zone, struct tm*& ptm, time_t& ms, time_t& us, time_t& ns){
+inline void print(int& zone, struct tm*& ptm, time_t& ms, time_t& us, time_t& ns){
 
     char* zch,*timezone;
     if(zone==1){
@@ -99,7 +102,7 @@ void print(int& zone, struct tm*& ptm, time_t& ms, time_t& us, time_t& ns){
         zch="GLOBAL";
         timezone="GMT";
         }
-    printf ("%6s TIME : %9s, %s %dth, %d, %02d:%02d:%02d, %3d MilliSec, %3d MicroSec, %3d NanoSec %s %s\n", zch, get_week(ptm->tm_wday), get_month(ptm->tm_mon), ptm->tm_mday, get_year(ptm->tm_year), (ptm->tm_hour)%24, ptm->tm_min, ptm->tm_sec,ms,us,ns,get_meridian((ptm->tm_hour)%24),timezone);
+    printf ("%6s TIME : %9s, %s %dth, %d, %02d:%02d:%02d %s, %3d MilliSec, %3d MicroSec, %3d NanoSec %s\n", zch, get_week(ptm->tm_wday), get_month(ptm->tm_mon), ptm->tm_mday, get_year(ptm->tm_year), TwelveHRFormat(ptm), ptm->tm_min, ptm->tm_sec, get_meridian((ptm->tm_hour)%24),ms,us,ns,timezone);
 }
 
 //gmt=0,local=1
